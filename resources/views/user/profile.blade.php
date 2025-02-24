@@ -1,4 +1,7 @@
 <html>
+<head>
+    <title>Profile</title>
+</head>
 <body>
     <h1>User Profile</h1>
     <p>ID: {{ $id }}</p>
