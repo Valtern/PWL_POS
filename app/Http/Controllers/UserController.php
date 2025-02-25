@@ -15,7 +15,7 @@ class UserController extends Controller
             'nama' => 'Pelanggan Pertama',
         ];
         UserModel::where('username', 'customer-1')->update($data); // update data user
-
+//asdasdasdsa
         // coba akses model UserModel
         $user = UserModel::all(); // ambil semua data dari tabel m_user
         return view('user', ['data' => $user]);
