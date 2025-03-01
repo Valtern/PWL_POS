@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\KategoriController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LevelController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SalesController;
@@ -21,6 +23,7 @@ use App\Http\Controllers\SalesController;
 //     return view('welcome');
 // });
 
+// JOB SHEET 2 //////////////////////////////////////////////////////////
 //home page
 Route::get('/', [HomeController::class, 'index']);
 
@@ -37,3 +40,12 @@ Route::get('/user/{id}/name/{name}', [UserController::class, 'show']);
 
 //sales tx
 Route::get('/sales', [SalesController::class, 'index']);
+// END OF JOB SHEET 2/////////////////////////////////////////////////////////////////////
+
+
+// JOB SHEET 3 ///////////////////////////////////////////////////////////
+Route::get('/level', [LevelController::class, 'index']);
+
+Route::get('/kategori', [KategoriController::class, 'index']);
+
+Route::get('/user', [UserController::class, 'index']);
