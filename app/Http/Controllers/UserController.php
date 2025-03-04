@@ -85,10 +85,11 @@ class UserController extends Controller
         $user->wasChanged('nama'); // false
         dd($user->wasChanged(['nama', 'username'])); // true */
 
-        $user =UserModel::all();
+       // $user =UserModel::all();
+        //return view('user', ['data' => $user]);
+
+        $user = UserModel::with('level')->get();
         return view('user', ['data' => $user]);
-
-
 
 
         // tambah data user dengan Eloquent Model
@@ -112,6 +113,7 @@ class UserController extends Controller
        // $user = UserModel::all(); // ambil semua data dari tabel m_user
         //return view('user', ['data' => $user]);
     }
+    /*
     public function tambah(){
         return view('user_tambah');
     }
@@ -148,7 +150,7 @@ class UserController extends Controller
         $user->delete();
 
         return redirect('/user');
-    }
+    }*/
 
 }
 
