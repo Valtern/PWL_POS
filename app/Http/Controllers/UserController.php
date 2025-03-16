@@ -11,15 +11,28 @@ use Yajra\DataTables\Facades\DataTables;
 class UserController extends Controller
 {
     public function index(){
-        $breadcrumb = (object)[
-            'title' => 'Daftar user',
-            'list' => ['Home', 'User']
+        $breadcrumb = (object) [
+            "title" => "Daftar User",
+            "list" => ['Home', 'User']
         ];
-        $page=(object)[
-            'title' => 'Daftar user yang terdaftar dalam sistem'
+
+        $page = (object) [
+            "title" => "Daftar user yang terdaftar dalam sistem"
         ];
+
         $activeMenu = 'user'; 
-        return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
+        $level = LevelModel::all(); 
+        return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
+
+        // $breadcrumb = (object)[
+        //     'title' => 'Daftar user',
+        //     'list' => ['Home', 'User']
+        // ];
+        // $page=(object)[
+        //     'title' => 'Daftar user yang terdaftar dalam sistem'
+        // ];
+        // $activeMenu = 'user'; 
+        // return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
 
         // $user = UserModel::with('level')->get();
         // return view('user', ['data' => $user]);
@@ -192,6 +205,10 @@ class UserController extends Controller
     {
         $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
             ->with('level');
+
+        if ($request->level_id) {
+            $users->where('level_id', $request->level_id);
+        }
 
         return DataTables::of($users)
             ->addIndexColumn()
