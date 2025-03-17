@@ -8,14 +8,38 @@ use Illuminate\Support\Facades\DB;
 
 class KategoriSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        DB::table('m_kategori')->insert([
-            ['kategori_id' => 1, 'kode' => 'KAT001', 'nama' => 'Elektronik'],
-            ['kategori_id' => 2, 'kode' => 'KAT001', 'nama' => 'Pakaian'],
-            ['kategori_id' => 3, 'kode' => 'KAT001', 'nama' => 'Makanan'],
-            ['kategori_id' => 4, 'kode' => 'KAT001', 'nama' => 'Minuman'],
-            ['kategori_id' => 5, 'kode' => 'KAT001', 'nama' =>'Aksesoris']
-        ]);
+        $data = [
+            [
+                'kategori_id' => 1,
+                'kategori_kode' => 'HP',
+                'kategori_nama' => 'HandPhone',
+            ],
+            [
+                'kategori_id' => 2,
+                'kategori_kode' => 'LP',
+                'kategori_nama' => 'Laptop',
+            ],
+            [
+                'kategori_id' => 3,
+                'kategori_kode' => 'MS',
+                'kategori_nama' => 'Mouse',
+            ],
+            [
+                'kategori_id' => 4,
+                'kategori_kode' => 'KB',
+                'kategori_nama' => 'Keyboard',
+            ],
+            [
+                'kategori_id' => 5,
+                'kategori_kode' => 'PRT',
+                'kategori_nama' => 'Printer',
+            ],
+        ];
+        DB::table('m_kategori')->insert($data);
     }
 }
