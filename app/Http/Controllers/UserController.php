@@ -202,28 +202,31 @@ class UserController extends Controller
     }
 
 // Fetch user data in JSON form for DataTables
-    public function list(Request $request)
-    {
-        $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
-            ->with('level');
+public function list(Request $request){
+    $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
+        ->with('level');
 
-        if ($request->level_id) {
-            $users->where('level_id', $request->level_id);
-        }
-
-        return DataTables::of($users)
-            ->addIndexColumn()
-            ->addColumn('action', function ($user) { // add action column
-                $btn = '<a href="'.url('/user/' . $user->user_id).'" class="btn btn-info btn-sm">Detail</a> ';
-                $btn .= '<a href="'.url('/user/' . $user->user_id . '/edit').'" class="btn btn-warning btn-sm">Edit</a> ';
-                $btn .= '<form class="d-inline-block" method="POST" action="'. url('/user/'.$user->user_id) .'">'
-                    . csrf_field() . method_field('DELETE') .
-                    '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Did you delete this data?\');">Delete</button></form>';
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+    // Filter user data by level_id
+    if ($request->level_id) {
+        $users->where('level_id', $request->level_id);
     }
+
+    return DataTables::of($users)
+        ->addIndexColumn() // Adds index/no sort column (default column name: DT_RowIndex)
+        ->addColumn('action', function ($user) {
+            // Add action column with buttons
+            $btn = '<button onclick="modalAction(\''.url('/user/'.$user->user_id.'/show_ajax').'\')"
+                        class="btn btn-info btn-sm">Detail</button> ';
+            $btn .= '<button onclick="modalAction(\''.url('/user/'.$user->user_id.'/edit_ajax').'\')"
+                        class="btn btn-warning btn-sm">Edit</button> ';
+            $btn .= '<button onclick="modalAction(\''.url('/user/'.$user->user_id.'/delete_ajax').'\')"
+                        class="btn btn-danger btn-sm">Delete</button>';
+
+            return $btn;
+        })
+        ->rawColumns(['action']) // Ensures the action column is interpreted as HTML
+        ->make(true);
+}
 
     public function create() {
         $breadcrumb = (object) [
@@ -371,6 +374,60 @@ public function store_ajax(Request $request) {
     }
 
     redirect('/');
+}
+
+// Menampilkan halaman form edit user ajax
+public function edit_ajax(string $id)
+{
+    $user = UserModel::find($id);
+    $level = LevelModel::select('level_id', 'level_nama')->get();
+
+    return view('user.edit_ajax', ['user' => $user, 'level' => $level]);
+}
+public function update_ajax(Request $request, $id){
+    // Check if the request is from AJAX or wants JSON response
+    if ($request->ajax() || $request->wantsJson()) {
+        // Validation rules
+        $rules = [
+            'level_id' => 'required|integer',
+            'username' => 'required|max:20|unique:m_user,username,' . $id . ',user_id',
+            'nama' => 'required|max:100',
+            'password' => 'nullable|min:6|max:20'
+        ];
+        // Validate request data
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false, // JSON response, false indicates failure
+                'message' => 'Validation failed.',
+                'msgField' => $validator->errors() // Fields with validation errors
+            ]);
+        }
+        // Find the user by ID
+        $user = UserModel::find($id);
+
+        if ($user) {
+            // If the password field is empty, remove it from the request
+            if (!$request->filled('password')) {
+                $request->request->remove('password');
+            }
+            // Update user data
+            $user->update($request->all());
+
+            return response()->json([
+                'status' => true, // Success response
+                'message' => 'Data updated successfully'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data not found'
+            ]);
+        }
+    }
+    // Redirect if the request is not AJAX
+    return redirect('/');
 }
 
 
