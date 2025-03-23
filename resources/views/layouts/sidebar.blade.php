@@ -46,7 +46,7 @@ role="menu" data-accordion="false">
         </a>
       </li>
       <li class="nav-item">
-        <a href="{{ url('/item') }}" class="nav-link {{ ($activeMenu == 'item')?
+        <a href="{{ url('/barang') }}" class="nav-link {{ ($activeMenu == 'item')?
 'active' : '' }} ">
           <i class="nav-icon far fa-list-alt"></i>
           <p>Goods Data</p>
@@ -54,14 +54,14 @@ role="menu" data-accordion="false">
       </li>
       <li class="nav-header">Transaction Data</li>
       <li class="nav-item">
-        <a href="{{ url('/stock') }}" class="nav-link {{ ($activeMenu == 'stock')?
+        <a href="{{ url('/stok') }}" class="nav-link {{ ($activeMenu == 'stock')?
 'active' : '' }} ">
           <i class="nav-icon fas fa-cubes"></i>
           <p>Stock of Goods</p>
         </a>
       </li>
       <li class="nav-item">
-        <a href="{{ url('/item') }}" class="nav-link {{ ($activeMenu == 'sales')?
+        <a href="{{ url('/penjualan') }}" class="nav-link {{ ($activeMenu == 'sales')?
 'active' : '' }} ">
           <i class="nav-icon fas fa-cash-register"></i> 
           <p>Sales Transactions</p> 
