@@ -430,7 +430,29 @@ public function update_ajax(Request $request, $id){
     return redirect('/');
 }
 
+public function confirm_ajax(string $id){
+    $user = UserModel::find($id);
+    return view('user.confirm_ajax', ['user' => $user]);
+}
 
+public function delete_ajax(Request $request){
+    if ($request->ajax() || $request->wantsJson()) {
+        $user = UserModel::find($request->id);
+        if ($user) {
+            $user->delete();
+            return response()->json([
+                'status' => true,
+                'message' => 'Data berhasil dihapus'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Data tidak ditemukan'
+            ]);
+        }
+    }
+    return redirect('/');
+}
     // public function show($id, $name){
     //     // return view('user.profile', [
     //     //     'id' => $id,
