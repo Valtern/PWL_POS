@@ -6,6 +6,7 @@
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
                 <a class="btn btn-sm btn-primary mt-1" href="{{ url('kategori/create') }}">Add</a>
+                <button onclick="modalAction('{{ url('kategori/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
             </div>
         </div>
         <div class="card-body">
@@ -19,14 +20,15 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Kategori Code</th>
-                        <th>Kategori Name</th>
+                        <th>Kode Kategori</th>
+                        <th>Nama Kategori</th>
                         <th>Action</th>
                     </tr>
                 </thead>
             </table>
         </div>
     </div>
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
@@ -34,9 +36,16 @@
 
 @push('js')
 <script>
+    function modalAction(url = '') {
+        $('#myModal').load(url,function(){
+            $('#myModal').modal('show');
+        });
+    }
+
+    var dataKategori;
     $(document).ready(function() {
-        var dataKategori = $('#table_kategori').DataTable({
-            serverSide: true, // Enable server-side processing
+        dataKategori = $('#table_kategori').DataTable({
+            serverSide: true, 
             ajax: {
                 "url": "{{ url('kategori/list') }}",
                 "dataType": "json",
@@ -46,7 +55,7 @@
                 { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
                 { data: "kategori_kode", className: "", orderable: true, searchable: true },
                 { data: "kategori_nama", className: "", orderable: true, searchable: true },
-                { data: "action", className: "", orderable: false, searchable: false }
+                { data: "action", className: "text-center", orderable: false, searchable: false }
             ]
         });
     });
