@@ -11,7 +11,7 @@ class StokModel extends Model
 
     protected $table = 't_stok';
     protected $primaryKey = 'stok_id';
-    
+
     protected $fillable = [
         'barang_id',
         'user_id',
@@ -31,5 +31,5 @@ class StokModel extends Model
     public function user()
     {
         return $this->belongsTo(UserModel::class, 'user_id', 'user_id');
-    }    
+    }
 }

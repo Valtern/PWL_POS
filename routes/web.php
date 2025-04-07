@@ -126,9 +126,15 @@ Route::group(['prefix' => 'barang'], function () {
     Route::post('/list', [BarangController::class, 'list']);
     Route::get('/create', [BarangController::class, 'create']);
     Route::post('/', [BarangController::class, 'store']);
+    Route::get('/create_ajax', [BarangController::class, 'create_ajax']);
+    Route::post('/ajax', [BarangController::class, 'store_ajax']);
     Route::get('/{id}', [BarangController::class, 'show']);
     Route::get('/{id}/edit', [BarangController::class, 'edit']);
     Route::put('/{id}', [BarangController::class, 'update']);
+    Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']);
+    Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']);
+    Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
+    Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
     Route::delete('/{id}', [BarangController::class, 'destroy']);
 });
 
@@ -137,8 +143,15 @@ Route::group(['prefix' => 'stok'], function () {
     Route::post('/list', [StokController::class, 'list']);
     Route::get('/create', [StokController::class, 'create']);
     Route::post('/', [StokController::class, 'store']);
+    Route::get('/create_ajax', [StokController::class, 'create_ajax']);
+    Route::post('/ajax', [StokController::class, 'store_ajax']);
     Route::get('/{id}', [StokController::class, 'show']);
     Route::get('/{id}/edit', [StokController::class, 'edit']);
+    Route::put('/{id}', [StokController::class, 'update']);
+    Route::get('/{id}/edit_ajax', [StokController::class, 'edit_ajax']);
+    Route::put('/{id}/update_ajax', [StokController::class, 'update_ajax']);
+    Route::get('/{id}/delete_ajax', [StokController::class, 'confirm_ajax']);
+    Route::delete('/{id}/delete_ajax', [StokController::class, 'delete_ajax']);
     Route::put('/{id}', [StokController::class, 'update']);
     Route::delete('/{id}', [StokController::class, 'destroy']);
 });
@@ -148,8 +161,14 @@ Route::group(['prefix' => 'penjualan'], function () {
     Route::post('/list', [PenjualanController::class, 'list']);
     Route::get('/create', [PenjualanController::class, 'create']);
     Route::post('/', [PenjualanController::class, 'store']);
+    Route::get('/create_ajax', [PenjualanController::class, 'create_ajax']);
+    Route::post('/ajax', [PenjualanController::class, 'store_ajax']);
     Route::get('/{id}', [PenjualanController::class, 'show']);
     Route::get('/{id}/edit', [PenjualanController::class, 'edit']);
     Route::put('/{id}', [PenjualanController::class, 'update']);
+    Route::get('/{id}/edit_ajax', [PenjualanController::class, 'edit_ajax']);
+    Route::put('/{id}/update_ajax', [PenjualanController::class, 'update_ajax']);
+    Route::get('/{id}/delete_ajax', [PenjualanController::class, 'confirm_ajax']);
+    Route::delete('/{id}/delete_ajax', [PenjualanController::class, 'delete_ajax']);
     Route::delete('/{id}', [PenjualanController::class, 'destroy']);
 });

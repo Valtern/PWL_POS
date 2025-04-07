@@ -12,7 +12,7 @@ class BarangModel extends Model
 
     protected $table = 'm_barang';
     protected $primaryKey = 'barang_id';
-    
+
     protected $fillable = [
         'kategori_id',
         'barang_kode',
@@ -20,7 +20,7 @@ class BarangModel extends Model
         'harga_beli',
         'harga_jual'
     ];
-    
+
     public function kategori() : BelongsTo {
         return $this->belongsTo(KategoriModel::class, 'kategori_id', 'kategori_id');
     }
