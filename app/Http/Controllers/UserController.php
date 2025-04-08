@@ -21,8 +21,8 @@ class UserController extends Controller
             "title" => "Daftar user yang terdaftar dalam sistem"
         ];
 
-        $activeMenu = 'user'; 
-        $level = LevelModel::all(); 
+        $activeMenu = 'user';
+        $level = LevelModel::all();
         return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
 
         // $breadcrumb = (object)[
@@ -32,7 +32,7 @@ class UserController extends Controller
         // $page=(object)[
         //     'title' => 'Daftar user yang terdaftar dalam sistem'
         // ];
-        // $activeMenu = 'user'; 
+        // $activeMenu = 'user';
         // return view('user.index', ['breadcrumb' => $breadcrumb, 'page' => $page, 'activeMenu' => $activeMenu]);
 
         // $user = UserModel::with('level')->get();
@@ -64,7 +64,7 @@ class UserController extends Controller
         //         'nama' => 'Manager55',
         //         'password' => Hash::make('12345'),
         //         'level_id' => 2
-        //     ], 
+        //     ],
         // );
         // $user->username = 'manager56';
         // //isDity
@@ -144,14 +144,14 @@ class UserController extends Controller
         //     'password' => Hash::make('12345'),
         //     'level_id' => 4
         // ];
-    
+
         // // Cek apakah username sudah ada
         // $checkUser = UserModel::where('username', $data['username'])->first();
-    
+
         // if (!$checkUser) {
         //     UserModel::insert($data);
         // }
-    
+
         // $user = UserModel::all();
         // return view('user', ['data' => $user]);
 
@@ -221,7 +221,7 @@ class UserController extends Controller
     //                 '<button type="submit" class="btn btn-danger btn-sm" onclick="return confirm(\'Did you delete this data?\');">Delete</button></form>';
     //             return $btn;
     //         })
-    //         ->rawColumns(['action']) 
+    //         ->rawColumns(['action'])
     //         ->make(true);
     // }
 
@@ -234,10 +234,10 @@ class UserController extends Controller
         $page = (object)[
             'title' => 'Tambah user baru'
         ];
-        
+
         $level = LevelModel::all();
         $activeMenu = 'user';
-        
+
         return view('user.create', ['breadcrumb' => $breadcrumb, 'page' => $page, 'level' => $level, 'activeMenu' => $activeMenu]);
     }
 
@@ -252,7 +252,7 @@ class UserController extends Controller
         UserModel::create([
             'username' => $request->username,
             'nama' => $request->nama,
-            'password' => bcrypt($request->password), 
+            'password' => bcrypt($request->password),
             'level_id' => $request->level_id
         ]);
 
@@ -289,8 +289,8 @@ class UserController extends Controller
             'title' => 'Edit User'
         ];
 
-        $activeMenu = 'user'; 
-        $level = LevelModel::all(); 
+        $activeMenu = 'user';
+        $level = LevelModel::all();
 
         return view('user.edit', [
             'breadcrumb' => $breadcrumb,
@@ -306,7 +306,7 @@ class UserController extends Controller
         $request->validate([
             'username' => 'required|string|min:3|unique:m_user,username,' . $id . ',user_id',
             'nama' => 'required|string|max:100',
-            'password' => 'nullable|min:5', 
+            'password' => 'nullable|min:5',
             'level_id' => 'required|integer'
         ]);
 
@@ -323,7 +323,7 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $check = UserModel::find($id);
-        if (!$check) { 
+        if (!$check) {
             return redirect('/user')->with('error', 'Data user tidak ditemukan');
         }
 
@@ -351,7 +351,7 @@ class UserController extends Controller
             ];
 
             $validator = Validator::make($request->all(), $rules);
-            
+
             if ($validator->fails()) {
                 return response()->json([
                     'status' => 'false',
@@ -359,7 +359,7 @@ class UserController extends Controller
                     'msgField' => $validator->errors(),
                 ]);
             }
-            
+
             UserModel::create($request->all());
             return response()->json([
                 'status' => 'true',
@@ -382,13 +382,13 @@ class UserController extends Controller
             ->addIndexColumn() // Adds index/no sort column (default column name: DT_RowIndex)
             ->addColumn('action', function ($user) {
                 // Add action column with buttons
-                $btn = '<button onclick="modalAction(\''.url('/user/'.$user->user_id.'/show_ajax').'\')" 
+                $btn = '<button onclick="modalAction(\''.url('/user/'.$user->user_id.'/show_ajax').'\')"
                             class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\''.url('/user/'.$user->user_id.'/edit_ajax').'\')" 
+                $btn .= '<button onclick="modalAction(\''.url('/user/'.$user->user_id.'/edit_ajax').'\')"
                             class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\''.url('/user/'.$user->user_id.'/delete_ajax').'\')" 
+                $btn .= '<button onclick="modalAction(\''.url('/user/'.$user->user_id.'/delete_ajax').'\')"
                             class="btn btn-danger btn-sm">Delete</button>';
-                
+
                 return $btn;
             })
             ->rawColumns(['action']) // Ensures the action column is interpreted as HTML
@@ -466,10 +466,67 @@ class UserController extends Controller
                     'status' => false,
                     'message' => 'Data tidak ditemukan'
                 ]);
-            }   
+            }
         }
         return redirect('/');
     }
+
+    public function register(Request $request)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'level_id' => 'required|integer',
+                'username' => 'required|string|min:3|unique:m_user,username',
+                'nama' => 'required|string|max:100',
+                'password' => 'required|min:6'
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors(),
+                ]);
+            }
+
+            UserModel::create([
+                'level_id' => $request->level_id,
+                'username' => $request->username,
+                'nama' => $request->nama,
+                'password' => bcrypt($request->password) // Jangan lupa hashing password
+            ]);
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Data user berhasil disimpan',
+                'redirect' => url('/login')
+            ]);
+        }
+
+        // Jika request bukan AJAX
+        return redirect('/login/');
+    }
+
+    public function showRegistrationForm()
+{
+    $breadcrumb = (object) [
+        'title' => 'User Registration',
+        'list' => ['Home', 'Register']
+    ];
+
+    $page = (object) [
+        'title' => 'Create new user account'
+    ];
+
+    $levels = LevelModel::all();
+    return view('auth.register', [
+        'breadcrumb' => $breadcrumb,
+        'page' => $page,
+        'levels' => $levels
+    ]);
+}
 
     // public function show($id, $name){
     //     // return view('user.profile', [
