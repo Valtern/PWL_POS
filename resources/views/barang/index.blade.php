@@ -1,116 +1,162 @@
 @extends('layouts.template')
-
 @section('content')
-    <div class="card card-outline card-primary">
-        <div class="card-header">
-            <h3 class="card-title">{{ $page->title }}</h3>
-            <div class="card-tools">
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('barang/create') }}">Tambah</a>
-                <button onclick="modalAction('{{ url('barang/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
-            </div>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">List of items</h3>
+        <div class="card-tools">
+            <button onclick="modalAction('{{ url('/barang/import') }}')" class="btn btn-info">Import Goods</button>
+            <a href="{{ url('/barang/export_excel') }}" class="btn btn-primary"><i class="fa fa-fileexcel"></i>Export Barang (XLSX)</a>
+            <a href="{{ url('/barang/export_pdf') }}" class="btn btn-primary"><i class="fa fa-filepdf"></i>Export Barang (PDF)</a>
+            <button onclick="modalAction('{{ url('barang/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Add Ajax</button>
         </div>
-        <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
+    </div>
+    <div class="card-body">
+        <!-- for Data filter -->
+        <div id="filter" class="form-horizontal filter-date p-2 border-bottom mb-2">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="form-group row">
-                        <label class="col-1 control-label col-form-label">Filter:</label>
-                        <div class="col-3">
-                            <select class="form-control" id="kategori_id" name="kategori_id">
-                                <option value="">- Semua Kategori -</option>
-                                @foreach($kategori as $item)
-                                    <option value="{{ $item->kategori_id }}">{{ $item->kategori_nama }}</option>
-                                @endforeach
+                    <div class="form-group form-group-sm row text-sm mb-0">
+                        <label for="filter_date" class="col-md-1 col-form-label">Filter</label>
+                        <div class="col-md-3">
+                            <select name="filter_kategori" class="form-control form-control-sm filter_kategori">
+                                <option value="">- All -</option>
+                                @isset($kategori)
+                                    @foreach($kategori as $l)
+                                        <option value="{{ $l->category_id }}">{{ $l->category_name }}</option>
+                                    @endforeach
+                                @endisset
                             </select>
-                            <small class="form-text text-muted">Kategori Barang</small>
+                            <small class="form-text text-muted">Item Category</small>
                         </div>
                     </div>
                 </div>
             </div>
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_barang">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Kode Barang</th>
-                        <th>Nama Barang</th>
-                        <th>Kategori</th>
-                        <th>Harga Beli</th>
-                        <th>Harga Jual</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
         </div>
-    </div>
-    <div id="barangModal" class="modal fade animate shake" tabindex="-1" role="dialog"
-         data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
-@endsection
 
-@push('css')
-    <style>
-        .text-right {
-            text-align: right;
-        }
-    </style>
-@endpush
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        <table class="table table-bordered table-sm table-striped table-hover" id="table-barang">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Item Code</th>
+                    <th>Item Name</th>
+                    <th>Purchase Price</th>
+                    <th>Selling Price</th>
+                    <th>Category</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<div id="myModal" class="modal fade animate shake" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="75%"></div>
+@endsection
 
 @push('js')
 <script>
-    function modalAction(url = '') {
-        $('#barangModal').load(url, function(){
-            $('#barangModal').modal('show');
+    function modalAction(url = ''){
+        $('#myModal').load(url,function(){
+            $('#myModal').modal('show');
         });
     }
 
-    $(document).ready(function() {
-        var dataBarang = $('#table_barang').DataTable({
-            serverSide: true,
-            ajax: {
-                url: "{{ url('barang/list') }}",
-                type: "POST",
-                data: function(d) {
-                    d.kategori_id = $('#kategori_id').val();
+    var tableItem;
+$(document).ready(function(){
+    tableItem = $('#table-barang').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: {
+            "url": "{{ url('barang/list') }}",
+            "dataType": "json",
+            "type": "POST",
+            "data": function (d) {
+                d.filter_kategori = $('.filter_kategori').val();
+                d._token = "{{ csrf_token() }}";
+            }
+        },
+        columns: [
+            {
+                data: "DT_RowIndex",
+                name: "DT_RowIndex",
+                className: "text-center",
+                width: "5%",
+                orderable: false,
+                searchable: false
+            },
+            {
+                data: "barang_kode",
+                className: "",
+                width: "10%",
+                orderable: true,
+                searchable: true
+            },
+            {
+                data: "barang_nama",
+                className: "",
+                width: "37%",
+                orderable: true,
+                searchable: true
+            },
+            {
+                data: "harga_beli",
+                className: "",
+                width: "10%",
+                orderable: true,
+                searchable: false,
+                render: function(data, type, row){
+                    return new Intl.NumberFormat('id-ID').format(data);
                 }
             },
-            columns: [
-                { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
-                { data: "barang_kode", className: "", orderable: true, searchable: true },
-                { data: "barang_nama", className: "", orderable: true, searchable: true },
-                { data: "kategori.kategori_nama", className: "", orderable: false, searchable: false },
-                { data: "harga_beli", className: "text-right", orderable: true, searchable: false },
-                { data: "harga_jual", className: "text-right", orderable: true, searchable: false },
-                { data: "action", className: "text-center", orderable: false, searchable: false }
-            ],
-            language: {
-                decimal: "",
-                emptyTable: "Tidak ada data yang tersedia",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
-                infoFiltered: "(disaring dari _MAX_ total entri)",
-                infoPostFix: "",
-                thousands: ".",
-                lengthMenu: "Tampilkan _MENU_ entri",
-                loadingRecords: "Memuat...",
-                processing: "Memproses...",
-                search: "Cari:",
-                zeroRecords: "Tidak ditemukan data yang sesuai",
-                paginate: {
-                    first: "Pertama",
-                    last: "Terakhir",
-                    next: "Selanjutnya",
-                    previous: "Sebelumnya"
+            {
+                data: "harga_jual",
+                className: "",
+                width: "10%",
+                orderable: true,
+                searchable: false,
+                render: function(data, type, row){
+                    return new Intl.NumberFormat('id-ID').format(data);
                 }
+            },
+            {
+                data: "category.category_name",
+                className: "",
+                width: "14%",
+                orderable: true,
+                searchable: false,
+                render: function(data, type, row) {
+                    // Handle both object and direct name cases
+                    if (typeof data === 'object') {
+                        return data.category_name || '';
+                    }
+                    return data || '';
+                }
+            },
+            {
+                data: "action",
+                className: "text-center",
+                width: "14%",
+                orderable: false,
+                searchable: false
             }
-        });
-
-        $('#kategori_id').on('change', function() {
-            dataBarang.ajax.reload();
-        });
+        ]
     });
+
+    $('#table-barang_filter input').unbind().bind().on('keyup', function(e){
+        if(e.keyCode == 13){ // enter key
+            tableItem.search(this.value).draw();
+        }
+    });
+
+    $('.filter_kategori').change(function(){
+        tableItem.draw();
+    });
+});
 </script>
 @endpush
