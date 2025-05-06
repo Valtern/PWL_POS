@@ -22,7 +22,7 @@
                                 <option value="">- All -</option>
                                 @isset($kategori)
                                     @foreach($kategori as $l)
-                                        <option value="{{ $l->category_id }}">{{ $l->category_name }}</option>
+                                        <option value="{{ $l->kategori_id }}">{{ $l->kategori_nama }}</option>
                                     @endforeach
                                 @endisset
                             </select>
@@ -125,7 +125,7 @@ $(document).ready(function(){
                 }
             },
             {
-                data: "category.category_name",
+                data: "kategori.kategori_nama",
                 className: "",
                 width: "14%",
                 orderable: true,
@@ -133,7 +133,7 @@ $(document).ready(function(){
                 render: function(data, type, row) {
                     // Handle both object and direct name cases
                     if (typeof data === 'object') {
-                        return data.category_name || '';
+                        return data.kategori_nama || '';
                     }
                     return data || '';
                 }

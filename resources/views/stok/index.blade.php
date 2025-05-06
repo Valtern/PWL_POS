@@ -1,123 +1,150 @@
 @extends('layouts.template')
-
 @section('content')
-    <div class="card card-outline card-primary">
-        <div class="card-header">
-            <h3 class="card-title">{{ $page->title }}</h3>
-            <div class="card-tools">
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('stok/create') }}">Tambah</a>
-                <button onclick="modalAction('{{ url('stok/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
-            </div>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">List of Stock Items</h3>
+        <div class="card-tools">
+            <button onclick="modalAction('{{ url('/stok/import') }}')" class="btn btn-info">Import Stock</button>
+            <a href="{{ url('/stok/export_excel') }}" class="btn btn-primary"><i class="fa fa-file-excel"></i> Export Stock (XLSX)</a>
+            <a href="{{ url('/stok/export_pdf') }}" class="btn btn-primary"><i class="fa fa-file-pdf"></i> Export Stock (PDF)</a>
+            <button onclick="modalAction('{{ url('/stok/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Add Ajax Stock</button>
         </div>
-        <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
+    </div>
+    <div class="card-body">
+        <!-- Filter by Item -->
+        <div id="filter" class="form-horizontal filter-barang p-2 border-bottom mb-2">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group row">
-                        <label class="col-1 control-label col-form-label">Filter:</label>
-                        <div class="col-3">
-                            <select class="form-control" id="barang_id" name="barang_id">
-                                <option value="">- Semua Barang -</option>
-                                @foreach($barang as $item)
-                                    <option value="{{ $item->barang_id }}">{{ $item->barang_nama }}</option>
-                                @endforeach
+                <div class="col-md-4">
+                    <div class="form-group form-group-sm row text-sm mb-0">
+                        <label for="filter_barang" class="col-md-2 col-form-label">Item</label>
+                        <div class="col-md-6">
+                            <select name="filter_barang" class="form-control form-control-sm filter_barang">
+                                <option value="">- All -</option>
+                                @isset($barang)
+                                    @foreach($barang as $brg)
+                                        <option value="{{ $brg->barang_id }}">{{ $brg->barang_nama }}</option>
+                                    @endforeach
+                                @endisset
                             </select>
-                            <small class="form-text text-muted">Nama Barang</small>
-                        </div>
-                        <div class="col-3">
-                            <select class="form-control" id="user_id" name="user_id">
-                                <option value="">- Semua User -</option>
-                                @foreach($user as $item)
-                                    <option value="{{ $item->user_id }}">{{ $item->nama }}</option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-muted">User</small>
+                            <small class="form-text text-muted">Filter by Item</small>
                         </div>
                     </div>
                 </div>
             </div>
-            <table class="table table-bordered table-striped table-hover table-sm" id="table_stok">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nama Barang</th>
-                        <th>User</th>
-                        <th>Tanggal Stok</th>
-                        <th>Jumlah</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
         </div>
-    </div>
-    <div id="stokModal" class="modal fade animate shake" tabindex="-1" role="dialog"
-         data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
-@endsection
 
-@push('css')
-    <style>
-        .text-right {
-            text-align: right;
-        }
-    </style>
-@endpush
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">{{ session('error') }}</div>
+        @endif
+
+        <table class="table table-bordered table-sm table-striped table-hover" id="table-stok">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Item Name</th>
+                    <th>User</th>
+                    <th>Date</th>
+                    <th>Quantity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false" data-width="75%"></div>
+@endsection
 
 @push('js')
 <script>
     function modalAction(url = '') {
-        $('#stokModal').load(url, function(){
-            $('#stokModal').modal('show');
+        $('#myModal').load(url, function() {
+            $('#myModal').modal('show');
         });
     }
 
+    let tableStok;
     $(document).ready(function() {
-        var dataStok = $('#table_stok').DataTable({
+        tableStok = $('#table-stok').DataTable({
+            processing: true,
             serverSide: true,
             ajax: {
                 url: "{{ url('stok/list') }}",
+                dataType: "json",
                 type: "POST",
                 data: function(d) {
-                    d.barang_id = $('#barang_id').val();
-                    d.user_id = $('#user_id').val();
+                    d.filter_barang = $('.filter_barang').val();
+                    d._token = "{{ csrf_token() }}";
                 }
             },
             columns: [
-                { data: "DT_RowIndex", className: "text-center", orderable: false, searchable: false },
-                { data: "barang.barang_nama", className: "", orderable: true, searchable: true },
-                { data: "user.nama", className: "", orderable: true, searchable: true },
-                { data: "stok_tanggal", className: "", orderable: true, searchable: false },
-                { data: "stok_jumlah", className: "text-right", orderable: true, searchable: false },
-                { data: "action", className: "text-center", orderable: false, searchable: false }
-            ],
-            language: {
-                decimal: "",
-                emptyTable: "Tidak ada data yang tersedia",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
-                infoEmpty: "Menampilkan 0 sampai 0 dari 0 entri",
-                infoFiltered: "(disaring dari _MAX_ total entri)",
-                infoPostFix: "",
-                thousands: ".",
-                lengthMenu: "Tampilkan _MENU_ entri",
-                loadingRecords: "Memuat...",
-                processing: "Memproses...",
-                search: "Cari:",
-                zeroRecords: "Tidak ditemukan data yang sesuai",
-                paginate: {
-                    first: "Pertama",
-                    last: "Terakhir",
-                    next: "Selanjutnya",
-                    previous: "Sebelumnya"
+                {
+                    data: "DT_RowIndex",
+                    name: "DT_RowIndex",
+                    className: "text-center",
+                    width: "5%",
+                    orderable: false,
+                    searchable: false
+                },
+                {
+                    data: "barang.barang_nama",
+                    name: "barang_nama",
+                    width: "25%",
+                    render: function(data) {
+                        return data || '-';
+                    }
+                },
+                {
+                    data: "user.nama",
+                    name: "user_nama",
+                    width: "20%",
+                    render: function(data) {
+                        return data || '-';
+                    }
+                },
+                {
+                    data: "stok_tanggal",
+                    name: "stok_tanggal",
+                    width: "20%",
+                    render: function(data) {
+                        return new Date(data).toLocaleString();
+                    }
+                },
+                {
+                    data: "stok_jumlah",
+                    name: "stok_jumlah",
+                    className: "text-right",
+                    width: "15%",
+                    render: function(data) {
+                        return new Intl.NumberFormat().format(data);
+                    }
+                },
+                {
+                    data: "action",
+                    name: "action",
+                    className: "text-center",
+                    width: "15%",
+                    orderable: false,
+                    searchable: false
                 }
+            ],
+            order: [[3, 'desc']] // Default sort by date
+        });
+
+        // Search on Enter key
+        $('#table-stok_filter input').unbind().bind('keyup', function(e) {
+            if (e.keyCode === 13) {
+                tableStok.search(this.value).draw();
             }
         });
 
-        $('#barang_id, #user_id').on('change', function() {
-            dataStok.ajax.reload();
+        // Redraw on item filter change
+        $('.filter_barang').change(function() {
+            tableStok.draw();
         });
     });
 </script>

@@ -105,6 +105,12 @@ Route::middleware(['authorize:ADM'])->group(function () {
         Route::get('/{id}/delete_ajax', [UserController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']);
         Route::delete('/{id}', [UserController::class, 'destroy']);
+        Route::get('/import', [UserController::class, 'import']);
+        Route::post('/import_ajax', [UserController::class, 'import_ajax']);
+        Route::get('/export_excel', [UserController::class, 'export_excel']);
+        Route::get('/export_pdf', [UserController::class, 'export_pdf']);
+        Route::post('/user/upload-photo', [UserController::class, 'uploadPhoto'])->name('user.uploadPhoto');
+
     });
 
     Route::group(['prefix' => 'level'], function() {
@@ -122,6 +128,10 @@ Route::middleware(['authorize:ADM'])->group(function () {
         Route::get('/{id}/delete_ajax', [LevelController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [LevelController::class, 'delete_ajax']);
         Route::delete('/{id}', [LevelController::class, 'destroy']);
+        Route::get('/import', [LevelController::class, 'import']);
+        Route::post('/import_ajax', [LevelController::class, 'import_ajax']);
+        Route::get('/export_excel', [LevelController::class, 'export_excel']);
+        Route::get('/export_pdf', [LevelController::class, 'export_pdf']);
     });
 });
 
@@ -141,27 +151,32 @@ Route::middleware(['authorize:ADM,MNG'])->group(function () {
         Route::get('/{id}/delete_ajax', [KategoriController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [KategoriController::class, 'delete_ajax']);
         Route::delete('/{id}', [KategoriController::class, 'destroy']);
+        Route::get('/import', [KategoriController::class, 'import']);
+        Route::post('/import_ajax', [KategoriController::class, 'import_ajax']);
+        Route::get('/export_excel', [KategoriController::class, 'export_excel']);
+        Route::get('/export_pdf', [KategoriController::class, 'export_pdf']);
     });
 
     Route::group(['prefix' => 'barang'], function () {
         Route::get('/', [BarangController::class, 'index']);
         Route::post('/list', [BarangController::class, 'list']);
         Route::get('/create', [BarangController::class, 'create']);
+        Route::post('/', [BarangController::class, 'store']);
         Route::get('/create_ajax', [BarangController::class, 'create_ajax']);
         Route::post('/ajax', [BarangController::class, 'store_ajax']);
         Route::get('/{id}', [BarangController::class, 'show']);
         Route::get('/{id}/edit', [BarangController::class, 'edit']);
-        Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax' ]);
-        Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax' ]);
-        Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax' ]);
-        Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax' ]);
+        Route::put('/{id}', [BarangController::class, 'update']);
+        Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']);
+        Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']);
+        Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
+        Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
         Route::delete('/{id}', [BarangController::class, 'destroy']);
-        Route::get('/import', [BarangController::class, 'import']); // ajax form upload excel
-        Route::post('/import_ajax', [BarangController::class, 'import_ajax']); // ajax import excel
-        Route::get('/export_excel', [BarangController::class, 'export_excel']); // export excel
-        Route::get('/export_pdf', [BarangController::class, 'export_pdf']); // export pdf
+        Route::get('/import', [BarangController::class, 'import']);
+        Route::post('/import_ajax', [BarangController::class, 'import_ajax']);
+        Route::get('/export_excel', [BarangController::class, 'export_excel']);
+        Route::get('/export_pdf', [BarangController::class, 'export_pdf']);
     });
-    Route::post('/profile/upload', [App\Http\Controllers\ProfileController::class, 'upload'])->name('profile.upload');
 
     Route::group(['prefix' => 'stok'], function () {
         Route::get('/', [StokController::class, 'index']);
@@ -179,6 +194,10 @@ Route::middleware(['authorize:ADM,MNG'])->group(function () {
         Route::delete('/{id}/delete_ajax', [StokController::class, 'delete_ajax']);
         Route::put('/{id}', [StokController::class, 'update']);
         Route::delete('/{id}', [StokController::class, 'destroy']);
+        Route::get('/import', [StokController::class, 'import']);
+        Route::post('/import_ajax', [StokController::class, 'import_ajax']);
+        Route::get('/export_excel', [StokController::class, 'export_excel']);
+        Route::get('/export_pdf', [StokController::class, 'export_pdf']);
     });
 });
 
@@ -198,6 +217,11 @@ Route::middleware(['authorize:ADM,MNG,STF'])->group(function () {
         Route::get('/{id}/delete_ajax', [PenjualanController::class, 'confirm_ajax']);
         Route::delete('/{id}/delete_ajax', [PenjualanController::class, 'delete_ajax']);
         Route::delete('/{id}', [PenjualanController::class, 'destroy']);
+        Route::get('/import', [PenjualanController::class, 'import']);
+        Route::post('/import_ajax', [PenjualanController::class, 'import_ajax']);
+        Route::get('/export_excel', [PenjualanController::class, 'export_excel']);
+        Route::get('/export_pdf', [PenjualanController::class, 'export_pdf']);
     });
 });
 });
+

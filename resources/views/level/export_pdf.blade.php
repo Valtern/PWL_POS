@@ -59,7 +59,9 @@
     <table class="border-bottom-header">
         <tr>
             <td width="15%" class="text-center">
-                <img width="auto" height="80px" src="{{ asset('polinema-bw.png') }}">
+                <img width="auto" height="80px"src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('polinema-bw.png'))) }}">
+
+                {{-- <img width="auto" height="80px" src="{{ asset('polinema-bw.png') }}"> --}}
             </td>
             <td width="85%">
                 <span class="text-center d-block font-11 font-bold mb-1">MINISTRY OF EDUCATION, CULTURE, RESEARCH AND TECHNOLOGY</span>
@@ -71,28 +73,22 @@
         </tr>
     </table>
 
-    <h3 class="text-center">ITEM DATA REPORT</h3>
+    <h3 class="text-center">LEVEL DATA REPORT</h3>
 
     <table class="border-all">
         <thead>
             <tr>
                 <th class="text-center">No</th>
-                <th>Goods Code</th>
-                <th>Item Name</th>
-                <th class="text-right">Purchase Price</th>
-                <th class="text-right">Selling Price</th>
-                <th>Category</th>
+                <th>Level Code</th>
+                <th>Level Name</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($barang as $b)
+            @foreach($levels as $level)
             <tr>
                 <td class="text-center">{{ $loop->iteration }}</td>
-                <td>{{ $b->barang_kode }}</td>
-                <td>{{ $b->barang_nama }}</td>
-                <td class="text-right">{{ number_format($b->harga_beli, 0, ',', '.') }}</td>
-                <td class="text-right">{{ number_format($b->harga_jual, 0, ',', '.') }}</td>
-                <td>{{ $b->kategori->kategori_id }}</td>
+                <td>{{ $level->level_kode }}</td>
+                <td>{{ $level->level_nama }}</td>
             </tr>
             @endforeach
         </tbody>

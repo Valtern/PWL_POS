@@ -71,28 +71,22 @@
         </tr>
     </table>
 
-    <h3 class="text-center">ITEM DATA REPORT</h3>
+    <h3 class="text-center">CATEGORY DATA REPORT</h3>
 
     <table class="border-all">
         <thead>
             <tr>
                 <th class="text-center">No</th>
-                <th>Goods Code</th>
-                <th>Item Name</th>
-                <th class="text-right">Purchase Price</th>
-                <th class="text-right">Selling Price</th>
-                <th>Category</th>
+                <th>Category Code</th>
+                <th>Category Name</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($barang as $b)
+            @foreach($kategori as $k)
             <tr>
                 <td class="text-center">{{ $loop->iteration }}</td>
-                <td>{{ $b->barang_kode }}</td>
-                <td>{{ $b->barang_nama }}</td>
-                <td class="text-right">{{ number_format($b->harga_beli, 0, ',', '.') }}</td>
-                <td class="text-right">{{ number_format($b->harga_jual, 0, ',', '.') }}</td>
-                <td>{{ $b->kategori->kategori_id }}</td>
+                <td>{{ $k->kategori_kode }}</td>
+                <td>{{ $k->kategori_nama }}</td>
             </tr>
             @endforeach
         </tbody>

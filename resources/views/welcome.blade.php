@@ -1,3 +1,16 @@
+{{-- @extends('layouts.template')
+@section('content')
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Halo, apakabar!!!</h3>
+        <div class="card-tools"></div>
+    </div>
+    <div class="card-body">
+        Selamat datang semua, ini adalah halaman utama dari aplikasi ini.
+    </div>
+</div>
+@endsection --}}
+
 @extends ('layouts.template' )
 
 @section('content')
@@ -9,7 +22,7 @@
             <div class="card-body box-profile text-center">
                 @if (session('photo'))
                     <img class="profile-user-img img-fluid img-circle"
-                         src="{{ asset('storage/' . session('photo')) }}"
+                     src="{{ asset('storage/' . session('photo')) }}"
                          alt="User profile picture">
                 @else
                     <img class="profile-user-img img-fluid img-circle"
@@ -22,13 +35,13 @@
 
                 <ul class="list-group list-group-unbordered mb-3 text-left">
                     <li class="list-group-item">
-                        <b>Email</b> <span class="float-right">antonios.kaharap@gmail.com</span>
+                        <b>Email</b> <span class="float-right">antonius.kaharap@gmail.com</span>
                     </li>
                     <li class="list-group-item">
                         <b>From</b> <span class="float-right">Polinema</span>
                     </li>
                     <li class="list-group-item">
-                        <b>Study Program</b> <span class="float-right">Teknik Informatika</span>
+                        <b>Study Program</b> <span class="float-right">Informatics engineering</span>
                     </li>
                 </ul>
             </div>
@@ -42,10 +55,10 @@
                 <h3 class="card-title">Upload Foto Profil</h3>
             </div>
             <div class="card-body">
-                <form action="{{ route('profile.upload') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('user.uploadPhoto') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-group">
-                        <label for="profile_photo">Pilih Foto Baru</label>
+                        <label for="profile_photo">Choose new</label>
                         <input type="file" name="profile_photo" class="form-control" required>
                     </div>
                     <button type="submit" class="btn btn-primary mt-2">Upload</button>
@@ -54,7 +67,4 @@
         </div>
     </div>
 </div>
-
-
-
 @endsection
